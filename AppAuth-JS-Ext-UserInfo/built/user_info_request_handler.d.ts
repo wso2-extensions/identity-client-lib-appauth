@@ -1,9 +1,4 @@
-import { AuthorizationServiceConfiguration } from './authorization_service_configuration';
-import { QueryStringUtils } from './query_string_utils';
-import { StorageBackend } from './storage';
-import { UserInfoRequest } from './user_info_request';
-import { UserInfoResponse } from './user_info_response';
-import { Requestor } from './xhr';
+import { AuthorizationServiceConfiguration, QueryStringUtils, Requestor, StorageBackend, UserInfoRequest, UserInfoResponse } from '@openid/appauth';
 /**
  * Defines the interface which is capable of handling an user info request
  * using various methods (iframe / popup / different process etc.).

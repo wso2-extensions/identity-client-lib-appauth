@@ -1,13 +1,4 @@
-import {AuthorizationServiceConfiguration} from './authorization_service_configuration';
-import {AppAuthError} from './errors';
-import {log} from './logger';
-import {BasicQueryStringUtils, QueryStringUtils} from './query_string_utils';
-import {LocalStorageBackend, StorageBackend} from './storage';
-import {TokenResponse} from './token_response';
-import {AUTHORIZATION_RESPONSE_HANDLE_KEY} from './types';
-import {UserInfoRequest} from './user_info_request';
-import {UserInfoError, UserInfoErrorJson, UserInfoResponse, UserInfoResponseJson} from './user_info_response';
-import {JQueryRequestor, Requestor} from './xhr';
+import {AppAuthError, AUTHORIZATION_RESPONSE_HANDLE_KEY, AuthorizationServiceConfiguration, BasicQueryStringUtils, JQueryRequestor, LocalStorageBackend, log, QueryStringUtils, Requestor, StorageBackend, TokenResponse, UserInfoError, UserInfoErrorJson, UserInfoRequest, UserInfoResponse, UserInfoResponseJson} from '@openid/appauth';
 
 /**
  * Defines the interface which is capable of handling an user info request

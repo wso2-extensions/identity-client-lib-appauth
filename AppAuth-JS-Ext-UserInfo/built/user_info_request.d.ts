@@ -1,4 +1,4 @@
-import { StringMap } from './types';
+import { StringMap } from '@openid/appauth';
 /**
  * Represents the User Info Request as JSON.
  */
