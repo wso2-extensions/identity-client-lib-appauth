@@ -83,13 +83,15 @@ export class AppLogout {
         isAuthRequestComplete = params.hasOwnProperty('id_token');
     }
 
+    var logoutCompletionPromise: Promise<void>;
     if (!isAuthRequestComplete) {
-      return this.endSessionHandler.completeEndSessionRequestIfPossible();
+      logoutCompletionPromise = this.endSessionHandler.completeEndSessionRequestIfPossible();
 
     } else {
-      return Promise.reject<void>(
+      logoutCompletionPromise = Promise.reject<void>(
         new AppAuthError("Not end session completion."));
     }
+    return logoutCompletionPromise;
   }
 
   makeLogoutRequest(state?: string) {

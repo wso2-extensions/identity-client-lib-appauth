@@ -1,12 +1,12 @@
 {
-  "name": "@openid/appauth",
+  "name": "@openid/appauth-ext-pkce",
   "version": "0.3.5",
-  "description": "A general purpose OAuth client.",
+  "description": "A general purpose OAuth extension client for AppAuth PKCE.",
   "author": "The OpenID Foundation",
   "license": "Apache-2.0",
-  "repository": "openid/AppAuth-JS",
+  "repository": "identity-client-lib-appauth/AppAuth-JS-Ext-PKCE/",
   "bugs": {
-    "url": "https://github.com/openid/AppAuth-JS/issues"
+    "url": "https://github.com/wso2-extensions/identity-client-lib-appauth/issues"
   },
   "files": [
     "src/**",
@@ -63,6 +63,7 @@
     "watchify": "^3.11.0"
   },
   "dependencies": {
+    "@openid/appauth": "file:../../appauth-lib-dev/AppAuth-JS",
     "@types/jquery": "^3.3.2",
     "follow-redirects": "^1.5.1",
     "form-data": "^2.3.2",

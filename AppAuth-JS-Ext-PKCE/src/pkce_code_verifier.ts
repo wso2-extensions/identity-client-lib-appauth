@@ -1,5 +1,5 @@
+import {cryptoGenerateRandom} from '@openid/appauth';
 import {sha256} from 'js-sha256';
-import {cryptoGenerateRandom} from './crypto_utils';
 
 /**
  * class for PKCE code challenge and code verifier generation.

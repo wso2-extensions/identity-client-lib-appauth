@@ -1,10 +1,5 @@
-import { AuthorizationRequest } from './authorization_request';
-import { AuthorizationRequestHandler } from './authorization_request_handler';
-import { AuthorizationServiceConfiguration } from './authorization_service_configuration';
+import { AuthorizationRequest, AuthorizationRequestHandler, AuthorizationServiceConfiguration, StorageBackend, TokenRequest, TokenRequestHandler } from '@openid/appauth';
 import { CodeVerifier } from './pkce_code_verifier';
-import { StorageBackend } from './storage';
-import { TokenRequest } from './token_request';
-import { TokenRequestHandler } from './token_request_handler';
 /**
  * Handler class for PKCE related request handling.
  */

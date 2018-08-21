@@ -1,13 +1,6 @@
-import {AuthorizationRequest} from './authorization_request';
-import {AuthorizationRequestHandler} from './authorization_request_handler';
-import {AuthorizationServiceConfiguration} from './authorization_service_configuration';
+import {AUTHORIZATION_RESPONSE_HANDLE_KEY, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationServiceConfiguration, BaseTokenRequestHandler, JQueryRequestor, LocalStorageBackend, RedirectRequestHandler, StorageBackend, TokenRequest, TokenRequestHandler} from '@openid/appauth';
+
 import {CodeVerifier} from './pkce_code_verifier';
-import {RedirectRequestHandler} from './redirect_based_handler';
-import {LocalStorageBackend, StorageBackend} from './storage';
-import {TokenRequest} from './token_request';
-import {BaseTokenRequestHandler, TokenRequestHandler} from './token_request_handler';
-import {AUTHORIZATION_RESPONSE_HANDLE_KEY} from './types';
-import {JQueryRequestor} from './xhr';
 
 /**
  * Handler class for PKCE related request handling.
