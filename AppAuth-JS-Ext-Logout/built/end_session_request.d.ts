@@ -1,5 +1,4 @@
-import { RandomGenerator } from './crypto_utils';
-import { StringMap } from './types';
+import { RandomGenerator, StringMap } from '@openid/appauth';
 /**
  * Represents an EndSessionRequest as JSON.
  */

@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import {cryptoGenerateRandom, RandomGenerator} from './crypto_utils';
-import {StringMap} from './types';
+import {cryptoGenerateRandom, RandomGenerator, StringMap} from '@openid/appauth';
 
 /**
  * Represents an EndSessionRequest as JSON.

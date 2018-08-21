@@ -12,13 +12,10 @@
  * limitations under the License.
  */
 
-import {AuthorizationServiceConfiguration} from './authorization_service_configuration';
-import {cryptoGenerateRandom, RandomGenerator} from './crypto_utils';
-import {EndSessionRequest, EndSessionRequestJson} from './end_session_request';
-import {EndSessionError, EndSessionErrorJson, EndSessionResponse, EndSessionResponseJson} from './end_session_response';
-import {log} from './logger';
-import {QueryStringUtils} from './query_string_utils';
-import {StringMap} from './types';
+import {AuthorizationServiceConfiguration, log, QueryStringUtils, RandomGenerator, StringMap} from '@openid/appauth';
+
+import {EndSessionRequest} from './end_session_request';
+import {EndSessionError, EndSessionResponse} from './end_session_response';
 
 /**
  * This type represents a lambda that can take an EndSessionRequest,

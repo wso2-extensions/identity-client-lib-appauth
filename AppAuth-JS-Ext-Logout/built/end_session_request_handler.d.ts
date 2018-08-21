@@ -1,8 +1,6 @@
-import { AuthorizationServiceConfiguration } from './authorization_service_configuration';
-import { RandomGenerator } from './crypto_utils';
+import { AuthorizationServiceConfiguration, QueryStringUtils, RandomGenerator } from '@openid/appauth';
 import { EndSessionRequest } from './end_session_request';
 import { EndSessionError, EndSessionResponse } from './end_session_response';
-import { QueryStringUtils } from './query_string_utils';
 /**
  * This type represents a lambda that can take an EndSessionRequest,
  * and an EndSessionResponse as arguments.

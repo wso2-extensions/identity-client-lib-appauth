@@ -1,10 +1,6 @@
-import { AuthorizationServiceConfiguration } from './authorization_service_configuration';
-import { RandomGenerator } from './crypto_utils';
+import { AuthorizationServiceConfiguration, BasicQueryStringUtils, LocationLike, StorageBackend } from '@openid/appauth';
 import { EndSessionRequest } from './end_session_request';
 import { EndSessionRequestHandler, EndSessionRequestResponse } from './end_session_request_handler';
-import { StorageBackend } from './index';
-import { BasicQueryStringUtils } from './query_string_utils';
-import { LocationLike } from './types';
 /**
  * Represents an EndSessionRequestHandler which uses a standard
  * redirect based code flow.
@@ -12,7 +8,7 @@ import { LocationLike } from './types';
 export declare class EndSessionRedirectRequestHandler extends EndSessionRequestHandler {
     storageBackend: StorageBackend;
     locationLike: LocationLike;
-    constructor(storageBackend?: StorageBackend, utils?: BasicQueryStringUtils, locationLike?: LocationLike, generateRandom?: RandomGenerator);
+    constructor(storageBackend?: StorageBackend, utils?: BasicQueryStringUtils, locationLike?: LocationLike, generateRandom?: import("@openid/appauth/built/crypto_utils").RandomGenerator);
     performEndSessionRequest(configuration: AuthorizationServiceConfiguration, request: EndSessionRequest): void;
     /**
      * Attempts to introspect the contents of storage backend and completes the request.

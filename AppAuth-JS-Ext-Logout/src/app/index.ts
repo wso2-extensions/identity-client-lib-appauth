@@ -14,143 +14,45 @@
 
 // Represents the test web app that uses the AppAuthJS library.
 
-import {AuthorizationRequest} from '../authorization_request';
-import {AuthorizationNotifier, AuthorizationRequestHandler} from '../authorization_request_handler';
-import {AuthorizationServiceConfiguration} from '../authorization_service_configuration';
-import {log} from '../logger';
-import {RedirectRequestHandler} from '../redirect_based_handler';
-import {GRANT_TYPE_AUTHORIZATION_CODE, TokenRequest} from '../token_request';
-import { FLOW_TYPE_IMPLICIT, FLOW_TYPE_PKCE, AUTHORIZATION_RESPONSE_HANDLE_KEY } from '../types';
-import { PKCETokenRequestHandler } from '../pkce_token_requestor';
-import { LocalStorageBackend, StorageBackend } from '../storage';
+import {AuthorizationServiceConfiguration, FLOW_TYPE_IMPLICIT, FLOW_TYPE_PKCE, AUTHORIZATION_RESPONSE_HANDLE_KEY,
+  LocalStorageBackend, StorageBackend, cryptoGenerateRandom, App, AppAuthError} from '@openid/appauth';
 import { EndSessionRedirectRequestHandler } from '../end_session_redirect_based_handler';
 import { EndSessionRequestHandler, EndSessionNotifier } from '../end_session_request_handler';
 import { EndSessionRequest } from '../end_session_request';
-import { cryptoGenerateRandom } from '../crypto_utils';
-import { UserInfoRequestHandler, BaseUserInfoRequestHandler } from '../user_info_request_handler';
 
 /**
  * The wrapper appication.
  */
-export class App {
+export class AppLogout {
 
   /* client configuration */
-  private authorizeUrl: string;
-  private tokenUrl: string;
-  private revokeUrl: string;
-  private logoutUrl: string;
-  private userInfoUrl: string;
-
   private clientId: string;
-  private clientSecret: string;
-  private redirectUri: string;
-  private scope: string;
+
   private postLogoutRedirectUri: string;
 
-  private discoveryUri: string;
-
   private userStore: StorageBackend;
-  private flowTypeInternal: string;
-
-  private notifier: AuthorizationNotifier;
-  private authorizationHandler: AuthorizationRequestHandler;
-  private pkceTokenRequestHandler: PKCETokenRequestHandler;
-  private userInfoRequestHandler: UserInfoRequestHandler;
 
   private endSessionNotifier: EndSessionNotifier;
   private endSessionHandler: EndSessionRequestHandler;
 
   private configuration: AuthorizationServiceConfiguration;
 
-  constructor({
-    authorizeUrl = '',
-    tokenUrl = '',
-    revokeUrl = '',
-    logoutUrl = '',
-    userInfoUrl = '',
-    flowType = "IMPLICIT",
-    userStore = "LOCAL_STORAGE",
-    clientId = '511828570984-7nmej36h9j2tebiqmpqh835naet4vci4.apps.googleusercontent.com',
-    clientSecret = '',
-    redirectUri = 'http://localhost:8080/app/',
-    scope = 'openid',
-    postLogoutRedirectUri = 'http://localhost:8080/app/',
-    discoveryUri = 'https://accounts.google.com'
-  } = {}) {
-
-    this.authorizeUrl = authorizeUrl;
-    this.tokenUrl = tokenUrl;
-    this.revokeUrl = revokeUrl;
-    this.logoutUrl = logoutUrl;
-    this.userInfoUrl = userInfoUrl;
-
-    this.flowTypeInternal = FLOW_TYPE_IMPLICIT;
-    if(flowType == "PKCE") {
-        this.flowTypeInternal = FLOW_TYPE_PKCE;
-    }
+  constructor(app: App, postLogoutRedirectUri: string, clientId: string) {
 
     this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.scope = scope;
-    this.redirectUri = redirectUri;
+
+    this.userStore = new LocalStorageBackend();
+
+    this.configuration = app.getConfiguration();
     this.postLogoutRedirectUri = postLogoutRedirectUri;
-    this.discoveryUri = discoveryUri;
-
-    if(userStore == "LOCAL_STORAGE") {
-      this.userStore = new LocalStorageBackend();
-    } else {
-      console.log('Session storage is not currently supported on underlying platform.');
-      this.userStore = new LocalStorageBackend();
-    }
-
-    this.configuration = new AuthorizationServiceConfiguration(
-      this.flowTypeInternal,
-      authorizeUrl,
-      tokenUrl,
-      revokeUrl,
-      logoutUrl,
-      userInfoUrl);
-
-    this.notifier = new AuthorizationNotifier();
-    this.authorizationHandler = new RedirectRequestHandler();
-
-    this.pkceTokenRequestHandler = new PKCETokenRequestHandler(this.authorizationHandler, this.configuration, this.userStore);
-    this.userInfoRequestHandler = new BaseUserInfoRequestHandler(this.userStore);
+    this.configuration.endSessionEndpoint = postLogoutRedirectUri;
 
     this.endSessionNotifier = new EndSessionNotifier();
     // uses a redirect flow
     this.endSessionHandler = new EndSessionRedirectRequestHandler();
   }
 
-  init(authorizationListenerCallback?: Function, endSessionListenerCallback?: Function) {
-    // set notifier to deliver responses
-    this.authorizationHandler.setAuthorizationNotifier(this.notifier);
-    // set a listener to listen for authorization responses
-    this.notifier.setAuthorizationListener((request, response, error) => {
-      log('Authorization request complete ', request, response, error);
-      if (response) {
-        this.showMessage(`Authorization Code ${response.code}`);
-
-        if (this.configuration.toJson().oauth_flow_type == FLOW_TYPE_PKCE && response.code) {
-          let tokenRequestExtras = {
-            client_secret: (this.clientSecret == null ? '' : this.clientSecret),
-            state: response.state
-          };
-          let request = new TokenRequest(
-              this.clientId,
-              this.redirectUri,
-              GRANT_TYPE_AUTHORIZATION_CODE,
-              response.code,
-              undefined,
-              tokenRequestExtras);
-          this.pkceTokenRequestHandler.performPKCEAuthorizationTokenRequest(
-              this.configuration, request);
-        }
-      }
-      if(authorizationListenerCallback) {
-        authorizationListenerCallback(request, response, error);
-      }
-    });
+  init(endSessionListenerCallback?: Function) {
 
     // set notifier to deliver responses
     this.endSessionHandler.setEndSessionNotifier(this.endSessionNotifier);
@@ -161,59 +63,6 @@ export class App {
         endSessionListenerCallback(request, response, error);
       }
     });
-  }
-
-  fetchServiceConfiguration() {
-
-    AuthorizationServiceConfiguration.fetchFromIssuer(this.discoveryUri)
-      .then(response => {
-        log('Fetched service configuration', response);
-        response.oauthFlowType = this.flowTypeInternal;
-        this.showMessage('Completed fetching configuration');
-        this.configuration = response;
-      })
-      .catch(error => {
-        log('Something bad happened', error);
-        this.showMessage(`Something bad happened ${error}`)
-      });
-  }
-
-  makeAuthorizationRequest(state?: string, nonce?: string) {
-
-    // generater state
-    if(!state) {
-      state = App.generateState();
-    }
-
-    // create a request
-    var request;
-    if (this.configuration.toJson().oauth_flow_type == FLOW_TYPE_IMPLICIT) {
-      // generater nonce
-      if(!nonce) {
-        nonce = App.generateNonce();
-      }
-
-      request = new AuthorizationRequest(
-          this.clientId,
-          this.redirectUri,
-          this.scope,
-          AuthorizationRequest.RESPONSE_TYPE_ID_TOKEN,
-          state,
-          {'prompt': 'consent', 'access_type': 'online', 'nonce': nonce});
-      // make the authorization request
-      this.authorizationHandler.performAuthorizationRequest(this.configuration, request);
-
-    } else if (this.configuration.toJson().oauth_flow_type == FLOW_TYPE_PKCE) {
-      let authRequestExtras = {prompt: 'consent', access_type: 'online'};
-      request = new AuthorizationRequest(
-          this.clientId,
-          this.redirectUri,
-          this.scope,
-          AuthorizationRequest.RESPONSE_TYPE_CODE,
-          state, /* state */
-          authRequestExtras);
-      this.pkceTokenRequestHandler.performPKCEAuthorizationCodeRequest(this.configuration, request);
-    }
   }
 
   checkForAuthorizationResponse(): Promise<void> {
@@ -234,18 +83,19 @@ export class App {
         isAuthRequestComplete = params.hasOwnProperty('id_token');
     }
 
-    if (isAuthRequestComplete) {
-      return this.authorizationHandler.completeAuthorizationRequestIfPossible();
+    if (!isAuthRequestComplete) {
+      return this.endSessionHandler.completeEndSessionRequestIfPossible();
 
     } else {
-      return this.endSessionHandler.completeEndSessionRequestIfPossible();
+      return Promise.reject<void>(
+        new AppAuthError("Not end session completion."));
     }
   }
 
   makeLogoutRequest(state?: string) {
     // generater state
     if(!state) {
-      state = App.generateState();
+      state = AppLogout.generateState();
     }
 
     this.userStore.getItem(AUTHORIZATION_RESPONSE_HANDLE_KEY).then(result => {
@@ -268,20 +118,8 @@ export class App {
     this.endSessionHandler.performEndSessionRequest(this.configuration, request);
   }
 
-  makeUserInfoRequest() {
-    return this.userInfoRequestHandler.performUserInfoRequest(this.configuration)
-    .then(userInfoResponse => {
-      return userInfoResponse.toJson();
-    });
-  }
-
   showMessage(message: string) {
     console.log(message);
-  }
-
-  static generateNonce() {
-    var nonceLen = 8;
-    return cryptoGenerateRandom(nonceLen);
   }
 
   static generateState() {
@@ -316,5 +154,5 @@ export class App {
   }
 }
 
-// export App
-(window as any)['App'] = App;
+// export AppLogout
+(window as any)['AppLogout'] = AppLogout;
