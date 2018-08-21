@@ -1,7 +1,7 @@
 {
   "name": "@openid/appauth-ext-userinfo",
   "version": "0.3.5",
-  "description": "A general purpose OAuth extension client for AppAuth.",
+  "description": "A general purpose OAuth extension client for AppAuth user info.",
   "author": "The OpenID Foundation",
   "license": "Apache-2.0",
   "repository": "identity-client-lib-appauth/AppAuth-JS-Ext-UserInfo/",
