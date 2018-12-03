@@ -46,7 +46,7 @@
 
     var application = null;
     var init = function () {
-      application = new App({
+      var appConfig = {
     'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
     'tokenUrl': 'https://localhost:9443/oauth2/token',
     'revokeUrl': 'https://localhost:9443/oauth2/revoke',
@@ -59,7 +59,8 @@
     'redirectUri': 'http://localhost:8080/app/',
     'scope': 'openid',
     'postLogoutRedirectUri': 'http://localhost:8080/app/'
-  });
+  };
+      application = new App(appConfig);
   application.init();
       // check for authorization response if available.
       application.checkForAuthorizationResponse();

@@ -12,26 +12,28 @@
  * limitations under the License.
  */
 
-import {StringMap} from '@openid/appauth';
+import {AuthorizationRequest} from './authorization_request';
+import {StringMap} from './types';
 
-import {EndSessionRequest} from './end_session_request';
-
-describe('EndSessionRequest Tests', () => {
-  const idTokenHint = 'id_token_hint';
-  const postLogoutRedirectUri = 'http://my/post_logout_redirect_uri';
+describe('AuthorizationRequest Tests', () => {
+  const clientId = 'client_id';
+  const redirectUri = 'http://my/redirect_uri';
+  const scope = 'scope';
   const state = 'state';
   const extras: StringMap = {'key': 'value'};
 
-  let request: EndSessionRequest =
-      new EndSessionRequest(idTokenHint, postLogoutRedirectUri, state, extras);
+  let request: AuthorizationRequest = new AuthorizationRequest(
+      clientId, redirectUri, scope, AuthorizationRequest.RESPONSE_TYPE_CODE, state, extras);
 
-  let request2: EndSessionRequest =
-      new EndSessionRequest(idTokenHint, postLogoutRedirectUri, undefined, extras);
+  let request2: AuthorizationRequest = new AuthorizationRequest(
+      clientId, redirectUri, scope, AuthorizationRequest.RESPONSE_TYPE_CODE, undefined, extras);
 
-  it('Basic EndSession Request Tests', () => {
+  it('Basic Authorization Request Tests', () => {
     expect(request).not.toBeNull();
-    expect(request.idTokenHint).toBe(idTokenHint);
-    expect(request.postLogoutRedirectUri).toBe(postLogoutRedirectUri);
+    expect(request.responseType).toBe(AuthorizationRequest.RESPONSE_TYPE_CODE);
+    expect(request.clientId).toBe(clientId);
+    expect(request.redirectUri).toBe(redirectUri);
+    expect(request.scope).toBe(scope);
     expect(request.state).toBe(state);
     expect(request.extras).toBeTruthy();
     expect(request.extras!['key']).toBe('value');
@@ -41,10 +43,12 @@ describe('EndSessionRequest Tests', () => {
   it('To Json() and from Json() should work', () => {
     let json = JSON.parse(JSON.stringify(request.toJson()));
     expect(json).not.toBeNull();
-    let newRequest = EndSessionRequest.fromJson(json);
+    let newRequest = AuthorizationRequest.fromJson(json);
     expect(newRequest).not.toBeNull();
-    expect(newRequest.idTokenHint).toBe(idTokenHint);
-    expect(newRequest.postLogoutRedirectUri).toBe(postLogoutRedirectUri);
+    expect(newRequest.responseType).toBe(AuthorizationRequest.RESPONSE_TYPE_CODE);
+    expect(newRequest.clientId).toBe(clientId);
+    expect(newRequest.redirectUri).toBe(redirectUri);
+    expect(newRequest.scope).toBe(scope);
     expect(newRequest.state).toBe(state);
     expect(newRequest.extras).toBeTruthy();
     expect(newRequest.extras!['key']).toBe('value');

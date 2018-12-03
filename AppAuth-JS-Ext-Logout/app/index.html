@@ -18,9 +18,7 @@
     </div>
     <br/>
     <div class="card mdl-card mdl-shadow--2dp">
-      <button class="mdl-button mdl-js-button mdl-button--raised" id="fetchConfig">Fetch Configuration</button>
       <button class="mdl-button mdl-js-button mdl-button--raised" id="authorize">Make Authorization Request</button>
-      <button class="mdl-button mdl-js-button mdl-button--raised" id="makeUserInfoRequest">Make User Info Request</button>
       <button class="mdl-button mdl-js-button mdl-button--raised" id="makeLogoutRequest">Logout Request</button>
     </div>
     <!-- snackbar -->
@@ -45,31 +43,32 @@
   <script type="text/javascript">
 
     var application = null;
+    var logoutApplication = null;
     var init = function () {
-      application = new App({
-    'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
-    'tokenUrl': 'https://localhost:9443/oauth2/token',
-    'revokeUrl': 'https://localhost:9443/oauth2/revoke',
-    'logoutUrl': 'https://localhost:9443/oidc/logout',
-    'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
-    'flowType': "PKCE",
-    'userStore': "LOCAL_STORAGE",
-    'clientId': '0Ob7gGlPWWoCMx4qrGNSWjRgnMwa',
-    'clientSecret': '4jjZU5nke4iovlq5seaSPVxnqBMa',
-    'redirectUri': 'http://localhost:8080/app/',
-    'scope': 'openid',
-    'postLogoutRedirectUri': 'http://localhost:8080/app/'
-  });
+      var appConfig = {
+  'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
+  'tokenUrl': 'https://localhost:9443/oauth2/token',
+  'revokeUrl': 'https://localhost:9443/oauth2/revoke',
+  'logoutUrl': 'https://localhost:9443/oidc/logout',
+  'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
+  'flowType': "IMPLICIT", // Possible values are only IMPLICIT for this example
+  'userStore': "LOCAL_STORAGE",
+  'clientId': 'YDMv8lTAWH42jYiZkdvqHTocFXsa',
+  'clientSecret': 'dLKJZIvPZX5H_GhTItlQ1eTNEE8a',
+  'redirectUri': 'http://localhost:8080/SPA_HTML_app/',
+  'scope': 'openid',
+  'postLogoutRedirectUri': 'http://localhost:8080/SPA_HTML_app/'
+  };
+
+      application = new App(appConfig);
   application.init();
       // check for authorization response if available.
       application.checkForAuthorizationResponse();
 
-      // fetch configuration handler
-      var fetchConfiguration = document.querySelector('#fetchConfig');
-      fetchConfiguration.addEventListener('click', function () {
-        application.fetchServiceConfiguration();
-        event.preventDefault();
-      });
+      logoutApplication = new AppLogout(application, appConfig.postLogoutRedirectUri, appConfig.clientId);
+      logoutApplication.init();
+      // check for authorization response if available.
+      logoutApplication.checkForAuthorizationResponse();
 
       // authorize request handler
       var authorize = document.querySelector('#authorize');
@@ -78,17 +77,10 @@
         event.preventDefault();
       });
 
-      // userInfo request handler
-      var makeUserInfoRequest = document.querySelector('#makeUserInfoRequest');
-      makeUserInfoRequest.addEventListener('click', function () {
-        application.makeUserInfoRequest();
-        event.preventDefault();
-      });
-
       // logout request handler
       var makeLogoutRequest = document.querySelector('#makeLogoutRequest');
       makeLogoutRequest.addEventListener('click', function () {
-        application.makeLogoutRequest();
+        logoutApplication.makeLogoutRequest();
         event.preventDefault();
       });
     };

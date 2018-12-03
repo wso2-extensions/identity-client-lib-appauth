@@ -1,6 +1,6 @@
 {
-  "name": "@openid/appauth-ext-logout",
-  "version": "0.3.5",
+  "name": "@wso2/appauth-ext-logout",
+  "version": "0.0.1",
   "description": "A general purpose OAuth extension client for AppAuth logout.",
   "author": "The OpenID Foundation",
   "license": "Apache-2.0",
@@ -13,17 +13,17 @@
     "app/**",
     "built/**"
   ],
-  "main": "built/index.js",
-  "types": "built/index.d.ts",
+  "main": "built/app/index.js",
+  "types": "built/app/index.d.ts",
   "scripts": {
     "preapp": "npm run-script --silent watch",
-    "app": "node_modules/.bin/watchify built/app/index.js -o built/app/bundle.js & http-server -p 8000",
+    "app": "node_modules/.bin/watchify built/app/index.js -o built/app/appauth_js_ext_logout.js & http-server -p 8000",
     "prenode-app": "npm run-script --silent compile",
     "node-app": "node ./built/node_app/index.js",
     "prebuild-app": "npm run-script --silent compile",
-    "build-app": "node_modules/.bin/browserify built/app/index.js -o built/app/bundle.js",
+    "build-app": "node_modules/.bin/browserify built/app/index.js -o built/app/appauth_js_ext_logout.js",
     "preminify": "npm run-script --silent build-app",
-    "minify": "java -jar node_modules/google-closure-compiler/compiler.jar --js built/app/bundle.js --js_output_file built/app/bundle_minified.js",
+    "minify": "java -jar node_modules/google-closure-compiler/compiler.jar --js built/app/appauth_js_ext_logout.js --js_output_file built/app/appauth_js_ext_logout_minified.js",
     "precompile": "npm run-script --silent clean && npm run-script --silent format",
     "compile": "node_modules/.bin/tsc",
     "prepare": "npm run-script --silent build-app",
@@ -32,7 +32,7 @@
     "pretest": "npm run-script --silent compile",
     "test": "node_modules/.bin/karma start karma.conf --browsers=Chrome --single-run=false --debug",
     "pregzipSize": "npm run-script --silent minify",
-    "gzipSize": "gzip -c built/app/bundle_minified.js | wc -c",
+    "gzipSize": "gzip -c built/app/appauth_js_ext_logout_minified.js | wc -c",
     "prewatch": "npm run-script --silent format",
     "watch": "node_modules/.bin/tsc --watch &"
   },
@@ -63,7 +63,7 @@
     "watchify": "^3.11.0"
   },
   "dependencies": {
-    "@openid/appauth": "file:../../appauth-lib-dev/AppAuth-JS",
+    "@openid/appauth": "github:wso2-extensions/identity-client-lib-appauth/AppAuth-JS",
     "@types/jquery": "^3.3.2",
     "follow-redirects": "^1.5.1",
     "form-data": "^2.3.2",
