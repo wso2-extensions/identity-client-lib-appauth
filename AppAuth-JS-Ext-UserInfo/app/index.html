@@ -52,8 +52,8 @@
     'revokeUrl': 'https://localhost:9443/oauth2/revoke',
     'logoutUrl': 'https://localhost:9443/oidc/logout',
     'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
-    'flowType': "PKCE",
-    'userStore': "LOCAL_STORAGE",
+    'flowType': FLOW_TYPE_PKCE, // only FLOW_TYPE_PKCE works.
+    'userStore': LOCAL_STORAGE,
     'clientId': '0Ob7gGlPWWoCMx4qrGNSWjRgnMwa',
     'clientSecret': '4jjZU5nke4iovlq5seaSPVxnqBMa',
     'redirectUri': 'http://localhost:8080/app/',

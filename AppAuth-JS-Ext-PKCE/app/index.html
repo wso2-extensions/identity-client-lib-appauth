@@ -47,20 +47,20 @@
     var application = null;
     var init = function () {
       application = new App({
-    'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
-    'tokenUrl': 'https://localhost:9443/oauth2/token',
-    'revokeUrl': 'https://localhost:9443/oauth2/revoke',
-    'logoutUrl': 'https://localhost:9443/oidc/logout',
-    'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
-    'flowType': "PKCE",
-    'userStore': "LOCAL_STORAGE",
-    'clientId': '0Ob7gGlPWWoCMx4qrGNSWjRgnMwa',
-    'clientSecret': '4jjZU5nke4iovlq5seaSPVxnqBMa',
-    'redirectUri': 'http://localhost:8080/app/',
-    'scope': 'openid',
-    'postLogoutRedirectUri': 'http://localhost:8080/app/'
-  });
-  application.init();
+        'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
+        'tokenUrl': 'https://localhost:9443/oauth2/token',
+        'revokeUrl': 'https://localhost:9443/oauth2/revoke',
+        'logoutUrl': 'https://localhost:9443/oidc/logout',
+        'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
+        'flowType': FLOW_TYPE_PKCE, // only FLOW_TYPE_PKCE works for this
+        'userStore': LOCAL_STORAGE,
+        'clientId': '0Ob7gGlPWWoCMx4qrGNSWjRgnMwa',
+        'clientSecret': '4jjZU5nke4iovlq5seaSPVxnqBMa',
+        'redirectUri': 'http://localhost:8080/app/',
+        'scope': 'openid',
+        'postLogoutRedirectUri': 'http://localhost:8080/app/'
+      });
+      application.init();
       // check for authorization response if available.
       application.checkForAuthorizationResponse();
 

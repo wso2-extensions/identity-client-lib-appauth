@@ -21,6 +21,11 @@ export interface LocationLike {
 export declare const FLOW_TYPE_IMPLICIT = "IMPLICIT";
 export declare const FLOW_TYPE_PKCE = "PKCE";
 /**
+ * Represents constants for browser storage types supported.
+ */
+export declare const LOCAL_STORAGE = "LOCAL_STORAGE";
+export declare const SESSION_STORAGE = "SESSION_STORAGE";
+/**
  * Represents session/localstorage key for saving the authorization response for the current
  * request.
  */

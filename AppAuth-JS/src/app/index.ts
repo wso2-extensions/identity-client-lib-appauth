@@ -19,8 +19,7 @@ import {AuthorizationNotifier, AuthorizationRequestHandler} from '../authorizati
 import {AuthorizationServiceConfiguration} from '../authorization_service_configuration';
 import {log} from '../logger';
 import {RedirectRequestHandler} from '../redirect_based_handler';
-import {GRANT_TYPE_AUTHORIZATION_CODE, TokenRequest} from '../token_request';
-import { FLOW_TYPE_IMPLICIT, FLOW_TYPE_PKCE, AUTHORIZATION_RESPONSE_HANDLE_KEY } from '../types';
+import { FLOW_TYPE_IMPLICIT, FLOW_TYPE_PKCE, LOCAL_STORAGE } from '../types';
 import { LocalStorageBackend, StorageBackend } from '../storage';
 import { cryptoGenerateRandom } from '../crypto_utils';
 
@@ -58,8 +57,8 @@ export class App {
     revokeUrl = '',
     logoutUrl = '',
     userInfoUrl = '',
-    flowType = "IMPLICIT",
-    userStore = "LOCAL_STORAGE",
+    flowType = FLOW_TYPE_IMPLICIT,
+    userStore = LOCAL_STORAGE,
     clientId = '511828570984-7nmej36h9j2tebiqmpqh835naet4vci4.apps.googleusercontent.com',
     clientSecret = '',
     redirectUri = 'http://localhost:8080/app/',
@@ -75,7 +74,7 @@ export class App {
     this.userInfoUrl = userInfoUrl;
 
     this.flowTypeInternal = FLOW_TYPE_IMPLICIT;
-    if(flowType == "PKCE") {
+    if (flowType == FLOW_TYPE_PKCE) {
         this.flowTypeInternal = FLOW_TYPE_PKCE;
     }
 
@@ -86,7 +85,7 @@ export class App {
     this.postLogoutRedirectUri = postLogoutRedirectUri;
     this.discoveryUri = discoveryUri;
 
-    if(userStore == "LOCAL_STORAGE") {
+    if (userStore == LOCAL_STORAGE) {
       this.userStore = new LocalStorageBackend();
     } else {
       console.log('Session storage is not currently supported on underlying platform.');
@@ -118,7 +117,7 @@ export class App {
       if (response) {
         this.showMessage(`Authorization Code ${response.code}`);
       }
-      if(authorizationListenerCallback) {
+      if (authorizationListenerCallback) {
         authorizationListenerCallback(request, response, error);
       }
     });
@@ -142,7 +141,7 @@ export class App {
   makeAuthorizationRequest(state?: string, nonce?: string) {
 
     // generater state
-    if(!state) {
+    if (!state) {
       state = App.generateState();
     }
 
@@ -150,7 +149,7 @@ export class App {
     var request;
     if (this.configuration.toJson().oauth_flow_type == FLOW_TYPE_IMPLICIT) {
       // generater nonce
-      if(!nonce) {
+      if (!nonce) {
         nonce = App.generateNonce();
       }
 

@@ -18,7 +18,7 @@
 
 import {AuthorizationRequest, AuthorizationNotifier, AuthorizationServiceConfiguration, log,
   RedirectRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, TokenRequest, 
-  FLOW_TYPE_IMPLICIT, FLOW_TYPE_PKCE, AuthorizationRequestHandler,
+  FLOW_TYPE_PKCE, AuthorizationRequestHandler,
   LocalStorageBackend, StorageBackend, cryptoGenerateRandom, App, AppAuthError} from '@openid/appauth';
 import { PKCETokenRequestHandler } from '../pkce_token_requestor';
 
@@ -44,7 +44,8 @@ export class AppPKCE {
 
   private app: App;
 
-  constructor(app: App, clientId: string, clientSecret: string, redirectUri: string, scope: string = 'openId', tokenUrl?: string) {
+  constructor(app: App, clientId: string, clientSecret: string, redirectUri: string, 
+    scope: string = 'openId', tokenUrl?: string) {
 
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -55,14 +56,15 @@ export class AppPKCE {
 
     this.configuration = app.getConfiguration();
     this.app = app;
-    if(tokenUrl) {
+    if (tokenUrl) {
       this.configuration.tokenEndpoint = tokenUrl;
     }
 
     this.notifier = new AuthorizationNotifier();
     this.authorizationHandler = new RedirectRequestHandler();
 
-    this.pkceTokenRequestHandler = new PKCETokenRequestHandler(this.authorizationHandler, this.configuration, this.userStore);
+    this.pkceTokenRequestHandler = new PKCETokenRequestHandler(this.authorizationHandler, 
+      this.configuration, this.userStore);
   }
 
   init(authorizationListenerCallback?: Function) {
@@ -90,7 +92,7 @@ export class AppPKCE {
               this.configuration, request);
         }
       }
-      if(authorizationListenerCallback) {
+      if (authorizationListenerCallback) {
         authorizationListenerCallback(request, response, error);
       }
     });
@@ -99,7 +101,7 @@ export class AppPKCE {
   makeAuthorizationRequest(state?: string) {
 
     // generater state
-    if(!state) {
+    if (!state) {
       state = App.generateState();
     }
 

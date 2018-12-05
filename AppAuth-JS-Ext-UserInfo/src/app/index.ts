@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import {AuthorizationServiceConfiguration, LocalStorageBackend, StorageBackend, App, FLOW_TYPE_PKCE} from '@openid/appauth';
-import {UserInfoRequestHandler,
-    BaseUserInfoRequestHandler} from '../user_info_request_handler';
+import {AuthorizationServiceConfiguration, LocalStorageBackend, StorageBackend, App, 
+  FLOW_TYPE_PKCE} from '@openid/appauth';
+import {UserInfoRequestHandler, BaseUserInfoRequestHandler} from '../user_info_request_handler';
 
 /**
  * The wrapper appication.
