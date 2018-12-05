@@ -16,7 +16,9 @@
  * under the License.
  */
 
-import {AUTHORIZATION_RESPONSE_HANDLE_KEY, AuthorizationServiceConfiguration, BasicQueryStringUtils, cryptoGenerateRandom, LocalStorageBackend, LocationLike, log, StorageBackend} from '@openid/appauth';
+import {AUTHORIZATION_RESPONSE_HANDLE_KEY, AuthorizationServiceConfiguration, 
+  BasicQueryStringUtils, cryptoGenerateRandom, LocalStorageBackend, LocationLike, 
+  log, StorageBackend} from '@openid/appauth';
 
 import {EndSessionRequest} from './end_session_request';
 import {EndSessionRequestHandler, EndSessionRequestResponse} from './end_session_request_handler';
