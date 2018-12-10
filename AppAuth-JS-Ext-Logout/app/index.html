@@ -57,9 +57,9 @@
   <script src="bundle.js"></script>
   <script type="text/javascript">
 
-    var application = null;
-    var logoutApplication = null;
-    var init = function () {
+    var app = null;
+    var appLogout = null;
+    var init = function (authCompletionCallback, logoutCompletionCallback) {
       var appConfig = {
         'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
         'tokenUrl': 'https://localhost:9443/oauth2/token',
@@ -70,32 +70,34 @@
         'userStore': LOCAL_STORAGE,
         'clientId': 'YDMv8lTAWH42jYiZkdvqHTocFXsa',
         'clientSecret': 'dLKJZIvPZX5H_GhTItlQ1eTNEE8a',
-        'redirectUri': 'http://localhost:8080/SPA_HTML_app/',
+        'redirectUri': 'http://localhost:8080/app/',
         'scope': 'openid',
-        'postLogoutRedirectUri': 'http://localhost:8080/SPA_HTML_app/'
+        'postLogoutRedirectUri': 'http://localhost:8080/app/'
       };
 
-      application = new App(appConfig);
-      application.init();
-      // check for authorization response if available.
-      application.checkForAuthorizationResponse();
+      app = new App(appConfig);
+      appLogout = new AppLogout(app, appConfig.postLogoutRedirectUri, appConfig.clientId);
 
-      logoutApplication = new AppLogout(application, appConfig.postLogoutRedirectUri, appConfig.clientId);
-      logoutApplication.init();
+      app.init(authCompletionCallback);
+      appLogout.init(logoutCompletionCallback);
+
       // check for authorization response if available.
-      logoutApplication.checkForAuthorizationResponse();
+      if (FLOW_TYPE_IMPLICIT == appConfigs.flowType) {
+        app.checkForAuthorizationResponse();
+      }
+      appLogout.checkForAuthorizationResponse();
 
       // authorize request handler
       var authorize = document.querySelector('#authorize');
       authorize.addEventListener('click', function () {
-        application.makeAuthorizationRequest();
+        app.makeAuthorizationRequest();
         event.preventDefault();
       });
 
       // logout request handler
       var makeLogoutRequest = document.querySelector('#makeLogoutRequest');
       makeLogoutRequest.addEventListener('click', function () {
-        logoutApplication.makeLogoutRequest();
+        appLogout.makeLogoutRequest();
         event.preventDefault();
       });
     };
