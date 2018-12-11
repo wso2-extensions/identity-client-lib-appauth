@@ -12,13 +12,9 @@
  * limitations under the License.
  */
 
-import {EndSessionNotifier} from './end_session_request_handler';
-
-describe('Tests for the EndSession Request handler', () => {
-  describe('Basic protocol tests', () => {
-    it('Basic endsession flow tests', (done: DoneFn) => {
-      let notifier = new EndSessionNotifier();
-      done();
-    });
-  });
-});
+/**
+ * Represents the AppAuthError type.
+ */
+export class AppAuthError {
+  constructor(public message: string, public extras?: any) {}
+}

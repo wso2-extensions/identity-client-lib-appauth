@@ -1,4 +1,19 @@
 <!DOCTYPE html>
+<!--
+~ Copyright (c) 2018 WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~ http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
 <html>
 
 <head>
@@ -18,9 +33,7 @@
     </div>
     <br/>
     <div class="card mdl-card mdl-shadow--2dp">
-      <button class="mdl-button mdl-js-button mdl-button--raised" id="fetchConfig">Fetch Configuration</button>
       <button class="mdl-button mdl-js-button mdl-button--raised" id="authorize">Make Authorization Request</button>
-      <button class="mdl-button mdl-js-button mdl-button--raised" id="makeUserInfoRequest">Make User Info Request</button>
       <button class="mdl-button mdl-js-button mdl-button--raised" id="makeLogoutRequest">Logout Request</button>
     </div>
     <!-- snackbar -->
@@ -44,51 +57,47 @@
   <script src="bundle.js"></script>
   <script type="text/javascript">
 
-    var application = null;
-    var init = function () {
-      application = new App({
-    'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
-    'tokenUrl': 'https://localhost:9443/oauth2/token',
-    'revokeUrl': 'https://localhost:9443/oauth2/revoke',
-    'logoutUrl': 'https://localhost:9443/oidc/logout',
-    'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
-    'flowType': "PKCE",
-    'userStore': "LOCAL_STORAGE",
-    'clientId': '0Ob7gGlPWWoCMx4qrGNSWjRgnMwa',
-    'clientSecret': '4jjZU5nke4iovlq5seaSPVxnqBMa',
-    'redirectUri': 'http://localhost:8080/app/',
-    'scope': 'openid',
-    'postLogoutRedirectUri': 'http://localhost:8080/app/'
-  });
-  application.init();
-      // check for authorization response if available.
-      application.checkForAuthorizationResponse();
+    var app = null;
+    var appLogout = null;
+    var init = function (authCompletionCallback, logoutCompletionCallback) {
+      var appConfig = {
+        'authorizeUrl': 'https://localhost:9443/oauth2/authorize',
+        'tokenUrl': 'https://localhost:9443/oauth2/token',
+        'revokeUrl': 'https://localhost:9443/oauth2/revoke',
+        'logoutUrl': 'https://localhost:9443/oidc/logout',
+        'userInfoUrl': 'https://localhost:9443/oauth2/userinfo',
+        'flowType': FLOW_TYPE_IMPLICIT, // Possible values are only FLOW_TYPE_IMPLICIT for this example
+        'userStore': LOCAL_STORAGE,
+        'clientId': 'YDMv8lTAWH42jYiZkdvqHTocFXsa',
+        'clientSecret': 'dLKJZIvPZX5H_GhTItlQ1eTNEE8a',
+        'redirectUri': 'http://localhost:8080/app/',
+        'scope': 'openid',
+        'postLogoutRedirectUri': 'http://localhost:8080/app/'
+      };
 
-      // fetch configuration handler
-      var fetchConfiguration = document.querySelector('#fetchConfig');
-      fetchConfiguration.addEventListener('click', function () {
-        application.fetchServiceConfiguration();
-        event.preventDefault();
-      });
+      app = new App(appConfig);
+      appLogout = new AppLogout(app, appConfig.postLogoutRedirectUri, appConfig.clientId);
+
+      app.init(authCompletionCallback);
+      appLogout.init(logoutCompletionCallback);
+
+      // check for authorization response if available.
+      if (FLOW_TYPE_IMPLICIT == appConfigs.flowType) {
+        app.checkForAuthorizationResponse();
+      }
+      appLogout.checkForAuthorizationResponse();
 
       // authorize request handler
       var authorize = document.querySelector('#authorize');
       authorize.addEventListener('click', function () {
-        application.makeAuthorizationRequest();
-        event.preventDefault();
-      });
-
-      // userInfo request handler
-      var makeUserInfoRequest = document.querySelector('#makeUserInfoRequest');
-      makeUserInfoRequest.addEventListener('click', function () {
-        application.makeUserInfoRequest();
+        app.makeAuthorizationRequest();
         event.preventDefault();
       });
 
       // logout request handler
       var makeLogoutRequest = document.querySelector('#makeLogoutRequest');
       makeLogoutRequest.addEventListener('click', function () {
-        application.makeLogoutRequest();
+        appLogout.makeLogoutRequest();
         event.preventDefault();
       });
     };

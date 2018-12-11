@@ -1,22 +1,24 @@
 /*
- * Copyright 2017 Google Inc.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
-// Represents the test web app that uses the AppAuthJS library.
 
 import {AuthorizationRequest, AuthorizationNotifier, AuthorizationServiceConfiguration, log,
   RedirectRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, TokenRequest, 
-  FLOW_TYPE_IMPLICIT, FLOW_TYPE_PKCE, AuthorizationRequestHandler,
+  FLOW_TYPE_PKCE, AuthorizationRequestHandler,
   LocalStorageBackend, StorageBackend, cryptoGenerateRandom, App, AppAuthError} from '@openid/appauth';
 import { PKCETokenRequestHandler } from '../pkce_token_requestor';
 
@@ -40,7 +42,10 @@ export class AppPKCE {
 
   private configuration: AuthorizationServiceConfiguration;
 
-  constructor(app: App, clientId: string, clientSecret: string, redirectUri: string, scope: string = 'openId', tokenUrl?: string) {
+  private app: App;
+
+  constructor(app: App, clientId: string, clientSecret: string, redirectUri: string, 
+    scope: string = 'openId', tokenUrl?: string) {
 
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -50,14 +55,16 @@ export class AppPKCE {
     this.userStore = new LocalStorageBackend();
 
     this.configuration = app.getConfiguration();
-    if(tokenUrl) {
+    this.app = app;
+    if (tokenUrl) {
       this.configuration.tokenEndpoint = tokenUrl;
     }
 
     this.notifier = new AuthorizationNotifier();
     this.authorizationHandler = new RedirectRequestHandler();
 
-    this.pkceTokenRequestHandler = new PKCETokenRequestHandler(this.authorizationHandler, this.configuration, this.userStore);
+    this.pkceTokenRequestHandler = new PKCETokenRequestHandler(this.authorizationHandler, 
+      this.configuration, this.userStore);
   }
 
   init(authorizationListenerCallback?: Function) {
@@ -85,7 +92,7 @@ export class AppPKCE {
               this.configuration, request);
         }
       }
-      if(authorizationListenerCallback) {
+      if (authorizationListenerCallback) {
         authorizationListenerCallback(request, response, error);
       }
     });
@@ -94,7 +101,7 @@ export class AppPKCE {
   makeAuthorizationRequest(state?: string) {
 
     // generater state
-    if(!state) {
+    if (!state) {
       state = App.generateState();
     }
 
@@ -118,28 +125,19 @@ export class AppPKCE {
     var isAuthRequestComplete = false;
 
     switch (this.configuration.toJson().oauth_flow_type) {
-      case FLOW_TYPE_IMPLICIT:
-        var params = this.parseQueryString(location, true);
-        isAuthRequestComplete = params.hasOwnProperty('id_token');
-        break;
       case FLOW_TYPE_PKCE:
         var params = this.parseQueryString(location, false);
         isAuthRequestComplete = params.hasOwnProperty('code');
         break;
-      default:
-        var params = this.parseQueryString(location, true);
-        isAuthRequestComplete = params.hasOwnProperty('id_token');
     }
 
-    var authCompletionPromise: Promise<void>;
     if (isAuthRequestComplete) {
-      authCompletionPromise = this.authorizationHandler.completeAuthorizationRequestIfPossible();
+      return this.authorizationHandler.completeAuthorizationRequestIfPossible();
 
     } else {
-      authCompletionPromise = Promise.reject<void>(
+      return Promise.reject<void>(
         new AppAuthError("No end session completion."));
     }
-    return authCompletionPromise;
   }
 
   showMessage(message: string) {
