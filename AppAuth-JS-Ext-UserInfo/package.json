@@ -63,7 +63,7 @@
     "watchify": "^3.11.0"
   },
   "dependencies": {
-    "@openid/appauth": "github:wso2-extensions/identity-client-lib-appauth/AppAuth-JS",
+    "@openid/appauth": "file://../AppAuth-JS",
     "@types/jquery": "^3.3.2",
     "follow-redirects": "^1.5.1",
     "form-data": "^2.3.2",
